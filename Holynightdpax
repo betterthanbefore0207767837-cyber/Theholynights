@@ -1,0 +1,657 @@
+--// SKYBOX + THE LEGEND OF ZELDA custom request
+
+local Lighting = game:GetService("Lighting")
+
+--// SKYBOX
+local skyData = {
+	SkyboxBk = "rbxassetid://102942079620616",
+	SkyboxDn = "rbxassetid://90045689911336",
+	SkyboxFt = "rbxassetid://111663185539486",
+	SkyboxLf = "rbxassetid://125113961576585",
+	SkyboxRt = "rbxassetid://115664147282781",
+	SkyboxUp = "rbxassetid://89592014842713"
+}
+
+local function applySkybox()
+	local sky = Lighting:FindFirstChildOfClass("Sky")
+
+	if not sky then
+		sky = Instance.new("Sky")
+		sky.Parent = Lighting
+	end
+
+	for property, value in pairs(skyData) do
+		sky[property] = value
+	end
+end
+
+applySkybox()
+
+--// KEEP SKYBOX ACTIVE
+Lighting.ChildRemoved:Connect(function(child)
+	if child:IsA("Sky") then
+		task.wait()
+		applySkybox()
+	end
+end)
+
+Lighting.ChildAdded:Connect(function(child)
+	if child:IsA("Sky") then
+		task.wait()
+		applySkybox()
+	end
+end)
+
+
+--// TEXTURE REPLACEMENT
+
+local function getAsset(url: string): string
+	local success, result = pcall(function()
+		if writefile and isfile and getcustomasset then
+			local fileName = "tex_" .. tostring(string.len(url) % 99999) .. "_" .. tostring(string.byte(url, 10) or 1) .. ".asset"
+			if not isfile(fileName) then
+				local data = game:HttpGet(url)
+				if data and #data > 80 then
+					writefile(fileName, data)
+				end
+			end
+			local asset = getcustomasset(fileName)
+			if asset and asset ~= "" then
+				return asset
+			end
+		end
+		return url
+	end)
+	return (success and result) or url
+end
+
+local Rules = {
+	{ids = {7658055825}, url = "https://raw.githubusercontent.com/prism658/Resources-fleasion/main/grods.png"},
+{ids = {85313933907097}, url = "https://raw.githubusercontent.com/leitopatatua-lab/nubsini/refs/heads/main/logo.png"},
+{ids = {17467242617}, url = "https://raw.githubusercontent.com/leitopatatua-lab/nubsini/refs/heads/main/4-4%20sfx.mp3"},
+{ids = {16810321565}, url = "https://raw.githubusercontent.com/leitopatatua-lab/nubsini/refs/heads/main/0825(1).MP3"},
+{ids = {6384899588}, url = "https://raw.githubusercontent.com/leitopatatua-lab/nubsini/refs/heads/main/intro.mp3"},
+{ids = {16530229616, 16530229541, 16530229695}, url = "https://raw.githubusercontent.com/leitopatatua-lab/nubsini/refs/heads/main/kill%20sound.mp3"},
+{ids = {18175187129}, url = "https://raw.githubusercontent.com/leitopatatua-lab/nubsini/refs/heads/main/orbs.png"},
+{ids = {17860673529}, url = "https://raw.githubusercontent.com/leitopatatua-lab/nubsini/refs/heads/main/orbs.png"},
+{ids = {16810041280}, url = "https://raw.githubusercontent.com/leitopatatua-lab/nubsini/refs/heads/main/win%20sound.mp3"},
+{ids = {16770456156, 16492958314}, url = "https://raw.githubusercontent.com/leitopatatua-lab/nubsini/refs/heads/main/double%20jump.wav"},
+{ids = {177266782}, url = "https://raw.githubusercontent.com/leitopatatua-lab/nubsini/refs/heads/main/select.ogg"},
+{ids = {18239670056}, url = "https://raw.githubusercontent.com/leitopatatua-lab/nubsini/refs/heads/main/win%20game.MP3"},
+{ids = {13854780042}, url = "https://raw.githubusercontent.com/leitopatatua-lab/nubsini/refs/heads/main/left.png"},
+{ids = {13854780213}, url = "https://raw.githubusercontent.com/leitopatatua-lab/nubsini/refs/heads/main/right.png"},
+{ids = {16802957270}, url = "https://raw.githubusercontent.com/leitopatatua-lab/nubsini/refs/heads/main/dead.png"},
+{ids = {12187323909, 12187320363, 12187354260, 12187342816, 12187280273, 12187303601, 12187262242, 12187288714, 12187341500, 12187271237, 12187341020}, url = "https://raw.githubusercontent.com/leitopatatua-lab/nubsini/refs/heads/main/The%20Wild%20Breath%20of%20Zelda.otf"},
+{ids = {121503061771505}, url = "https://raw.githubusercontent.com/leitopatatua-lab/nubsini/refs/heads/main/link.png"},
+{ids = {133917828562858}, url = "https://raw.githubusercontent.com/leitopatatua-lab/nubsini/refs/heads/main/zelda.png"},
+{ids = {17697682466, 17733314783, 100081814360953, 86062306109271, 82135261819112, 96771526359691, 120824068504773, 114306049661290, 91718252417630, 119694504935889}, url = "https://raw.githubusercontent.com/leitopatatua-lab/nubsini/refs/heads/main/Zelda%20Original%20Soundtrack%20-%20Saria's%20Song%20(The%20Lost%20Woods)%20-%20DrSuperMarioMan6464.mp3"},
+{ids = {17026600996}, url = "https://raw.githubusercontent.com/leitopatatua-lab/nubsini/refs/heads/main/match%20point.mp3"},
+{ids = {18525513345}, url = "https://raw.githubusercontent.com/leitopatatua-lab/nubsini/refs/heads/main/match%20making.mp3"},
+{ids = {17138490999}, url = "https://raw.githubusercontent.com/leitopatatua-lab/nubsini/refs/heads/main/0825.MP3"},
+{ids = {81461991645938}, url = "https://raw.githubusercontent.com/leitopatatua-lab/nubsini/refs/heads/main/Level%20background.png"},
+{ids = {13220167337, 13220167472, 13188242420}, url = "https://raw.githubusercontent.com/leitopatatua-lab/nubsini/refs/heads/main/weapon%20background.png"},
+{ids = {17175092502, 17094014569}, url = "https://raw.githubusercontent.com/leitopatatua-lab/nubsini/refs/heads/main/streak.png"},
+{ids = {14632127990}, url = "https://raw.githubusercontent.com/betterthanbefore0207767837-cyber/Diamobd/refs/heads/main/E12D7C98-F685-47CD-81EE-A437AA4C7DDB.png"},
+}
+
+local IdMap: {[string]: string} = {}
+
+for _, rule in ipairs(Rules) do
+	local asset = getAsset(rule.url)
+	for _, id in ipairs(rule.ids) do
+		IdMap[tostring(id)] = asset
+	end
+end
+
+local function apply(obj: Instance)
+	if not obj then return end
+
+	local function replace(property: string)
+		local success, value = pcall(function()
+			return obj[property]
+		end)
+		if not success or type(value) ~= "string" then return end
+		local id = string.match(value, "%d+")
+		if id and IdMap[id] then
+			pcall(function()
+				obj[property] = IdMap[id]
+			end)
+		end
+	end
+
+	if obj:IsA("Sound") then
+		replace("SoundId")
+	elseif obj:IsA("ImageLabel") or obj:IsA("ImageButton") then
+		replace("Image")
+	elseif obj:IsA("Decal") or obj:IsA("Texture") then
+		replace("Texture")
+	elseif obj:IsA("MeshPart") then
+		replace("TextureID")
+	end
+end
+
+task.wait(2)
+
+for _, v in ipairs(game:GetDescendants()) do
+	task.spawn(apply, v)
+end
+
+game.DescendantAdded:Connect(function(obj)
+	task.defer(apply, obj)
+end)
+
+-- @r37q - Rick-C17 : NO HANDS dub dub 
+do
+    local Players = game:GetService("Players")
+    local lp = Players.LocalPlayer
+
+    local function bitch(model)
+        if not model or not model.Parent then return end
+        if not model.Name:find(lp.Name, 1, true) then return end
+
+        for _, name in ipairs({"RightArm", "LeftArm"}) do
+            local arm = model:FindFirstChild(name)
+            if arm then
+                pcall(function() arm:Destroy() end)
+            end
+        end
+    end
+
+    local function fuckyouSkid()
+        -- @r37q made all of this
+        local vms = workspace:FindFirstChild("ViewModels")
+        if not vms then return end
+        local fp = vms:FindFirstChild("FirstPerson")
+        if not fp then return end
+        for _, m in ipairs(fp:GetChildren()) do
+            if m:IsA("Model") then
+                bitch(m)
+            end
+        end
+    end
+
+    fuckyouSkid()
+
+    local vms = workspace:FindFirstChild("ViewModels")
+    if vms then
+        -- @r37q made all of this
+        vms.DescendantAdded:Connect(function(obj)
+            if not obj or not obj.Parent then return end
+            if obj.Name == "RightArm" or obj.Name == "LeftArm" then
+                local m = obj.Parent
+                while m and m ~= vms do
+                    if m:IsA("Model") and m.Name:find(lp.Name, 1, true) then
+                        task.defer(function() pcall(function() obj:Destroy() end) end)
+                        return
+                    end
+                    m = m.Parent
+                end
+            end
+        end)
+    else
+        -- @r37q made all of this
+        workspace.ChildAdded:Connect(function(c)
+            if c.Name == "ViewModels" then
+                c.DescendantAdded:Connect(function(obj)
+                    if obj.Name == "RightArm" or obj.Name == "LeftArm" then
+                        task.defer(fuckyouSkid)
+                    end
+                end)
+            end
+        end)
+    end
+
+    -- @r37q made all of this | DONT REMOVE OR I'LL SUE
+    task.spawn(function()
+        while task.wait(0.5) do
+            pcall(fuckyouSkid)
+        end
+    end)
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- @r37q made all of this
+-- @r37q - Rick-C17 : Wubba Lubba dub dub 
+do
+    local Players = game:GetService("Players")
+    local lp = Players.LocalPlayer
+
+    local function bitch(model)
+        if not model or not model.Parent then return end
+        if not model.Name:find(lp.Name, 1, true) then return end
+
+        for _, name in ipairs({"RightArm", "LeftArm"}) do
+            local arm = model:FindFirstChild(name)
+            if arm then
+                pcall(function() arm:Destroy() end)
+            end
+        end
+    end
+
+    local function fuckyouSkid()
+        -- @r37q made all of this
+        local vms = workspace:FindFirstChild("ViewModels")
+        if not vms then return end
+        local fp = vms:FindFirstChild("FirstPerson")
+        if not fp then return end
+        for _, m in ipairs(fp:GetChildren()) do
+            if m:IsA("Model") then
+                bitch(m)
+            end
+        end
+    end
+
+    fuckyouSkid()
+
+    local vms = workspace:FindFirstChild("ViewModels")
+    if vms then
+        -- @r37q made all of this
+        vms.DescendantAdded:Connect(function(obj)
+            if not obj or not obj.Parent then return end
+            if obj.Name == "RightArm" or obj.Name == "LeftArm" then
+                local m = obj.Parent
+                while m and m ~= vms do
+                    if m:IsA("Model") and m.Name:find(lp.Name, 1, true) then
+                        task.defer(function() pcall(function() obj:Destroy() end) end)
+                        return
+                    end
+                    m = m.Parent
+                end
+            end
+        end)
+    else
+        -- @r37q made all of this
+        workspace.ChildAdded:Connect(function(c)
+            if c.Name == "ViewModels" then
+                c.DescendantAdded:Connect(function(obj)
+                    if obj.Name == "RightArm" or obj.Name == "LeftArm" then
+                        task.defer(fuckyouSkid)
+                    end
+                end)
+            end
+        end)
+    end
+
+    -- @r37q made all of this | DONT REMOVE OR I'LL SUE
+    task.spawn(function()
+        while task.wait(0.5) do
+            pcall(fuckyouSkid)
+        end
+    end)
+end
+
+repeat task.wait() until game:IsLoaded()
+
+local Players     = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+pcall(function()
+    local game_mt = getrawmetatable(game)
+    if game_mt and rawget(game_mt, "__index") then
+        local old_index = rawget(game_mt, "__index")
+        rawset(game_mt, "__index", newcclosure(function(self, key)
+            if key == "Kick" then
+                return function() end
+            end
+            return old_index(self, key)
+        end))
+    end
+end)
+
+pcall(function()
+    if LocalPlayer and LocalPlayer.Kick then
+        LocalPlayer.Kick = function() end
+    end
+end)
+
+pcall(function()
+    local renv = getrenv()
+    if type(renv) == "table" then
+        for _, name in ipairs({ "LPH_CRASH", "LPH_Report", "LPH_Log", "LPH_Flag", "LPH_Ban" }) do
+            if rawget(renv, name) ~= nil then
+                rawset(renv, name, function() end)
+            end
+        end
+    end
+end)
+if not hookmetamethod then
+    warn('[r37q] executor missing hookmetamethod — aborting')
+    return
+end
+
+local Players           = game:GetService('Players')
+local ReplicatedStorage = game:GetService('ReplicatedStorage')
+local LP                = Players.LocalPlayer
+
+local SUCKMY_DICK = 'Diamond Hands'
+
+if not LP.Character then LP.CharacterAdded:Wait() end
+task.wait(2)
+
+local function awaitChild(parent, name, timeout)
+    local t = 0
+    while not parent:FindFirstChild(name) and t < (timeout or 10) do
+        task.wait(0.5); t = t + 0.5
+    end
+    return parent:FindFirstChild(name)
+end
+
+local playerScripts = awaitChild(LP, 'PlayerScripts', 20)
+local controllers   = playerScripts and awaitChild(playerScripts, 'Controllers', 20)
+local modules       = awaitChild(ReplicatedStorage, 'Modules', 20)
+if not modules or not controllers then
+    warn('[r37q] module tree not ready')
+    return
+end
+
+local CosmeticLibrary   = awaitChild(modules, 'CosmeticLibrary', 10)
+local PlayerDataCtrlMod = awaitChild(controllers, 'PlayerDataController', 10)
+if not CosmeticLibrary or not PlayerDataCtrlMod then
+    warn('[r37q] required modules missing')
+    return
+end
+
+local cosmeticLib, pdc, enumLib
+local ok = pcall(function()
+    cosmeticLib = require(CosmeticLibrary)
+    pdc         = require(PlayerDataCtrlMod)
+    local enumMod = modules:FindFirstChild('EnumLibrary')
+    if enumMod then
+        enumLib = require(enumMod)
+        if enumLib and enumLib.WaitForEnumBuilder then
+            task.spawn(function()
+                pcall(function() enumLib:WaitForEnumBuilder() end)
+            end)
+        end
+    end
+end)
+if not ok or not cosmeticLib or not pdc then
+    warn('[r37q] module require failed')
+    return
+end
+
+if type(cosmeticLib.Cosmetics) ~= 'table'
+    or type(cosmeticLib.Cosmetics[SUCKMY_DICK]) ~= 'table'
+then
+    warn(string.format('[r37q] finisher %q not found in CosmeticLibrary', SUCKMY_DICK))
+    return
+end
+
+local ADULT_SWIM
+do
+    local src = cosmeticLib.Cosmetics[SUCKMY_DICK]
+    ADULT_SWIM = {}
+    for k, v in pairs(src) do ADULT_SWIM[k] = v end
+    ADULT_SWIM.Name = SUCKMY_DICK
+    ADULT_SWIM.Type = ADULT_SWIM.Type or 'Finisher'
+    ADULT_SWIM.Seed = math.random(1, 1000000)
+    if enumLib then
+        pcall(function()
+            local e = enumLib:ToEnum(SUCKMY_DICK)
+            if e then ADULT_SWIM.Enum, ADULT_SWIM.ObjectID = e, e end
+        end)
+    end
+end
+
+local function matchesTarget(cosmeticName)
+    if type(cosmeticName) == 'string' then
+        return cosmeticName == SUCKMY_DICK
+    end
+    if type(cosmeticName) == 'table' and cosmeticName.Name then
+        return cosmeticName.Name == SUCKMY_DICK
+    end
+    return false
+end
+
+local function wrapOwns(orig)
+    if type(orig) ~= 'function' then return orig end
+    return function(...)
+        for _, v in ipairs({ ... }) do
+            if matchesTarget(v) then return true end
+        end
+        return orig(...)
+    end
+end
+
+cosmeticLib.OwnsCosmetic             = wrapOwns(cosmeticLib.OwnsCosmetic)
+cosmeticLib.OwnsCosmeticForWeapon    = wrapOwns(cosmeticLib.OwnsCosmeticForWeapon)
+cosmeticLib.OwnsCosmeticNormally     = wrapOwns(cosmeticLib.OwnsCosmeticNormally)
+cosmeticLib.OwnsCosmeticUniversally  = wrapOwns(cosmeticLib.OwnsCosmeticUniversally)
+cosmeticLib.OwnsCosmeticForSomething = wrapOwns(cosmeticLib.OwnsCosmeticForSomething)
+
+local origGetWeaponData = pdc.GetWeaponData
+if type(origGetWeaponData) == 'function' then
+    pdc.GetWeaponData = function(self, weaponName)
+        local out  = {}
+        local base = origGetWeaponData(self, weaponName)
+        if type(base) == 'table' then
+            for k, v in pairs(base) do out[k] = v end
+        end
+        out.Finisher = ADULT_SWIM
+        return out
+    end
+end
+
+task.spawn(function()
+    task.wait(3)
+    pcall(function()
+        local CRC = playerScripts.Modules.ClientReplicatedClasses
+        local clientEntity = require(CRC.ClientEntity)
+        if type(clientEntity.ReplicateFromServer) ~= 'function' then return end
+
+        local orig = clientEntity.ReplicateFromServer
+        clientEntity.ReplicateFromServer = function(self, eventName, ...)
+            if eventName == 'FinisherEffect' then
+                local args = { ... }
+                local victim = args[3]
+                local victimName = victim
+                if type(victim) == 'userdata' and enumLib and enumLib.FromEnum then
+                    pcall(function() victimName = enumLib:FromEnum(victim) end)
+                end
+                local isUs = tostring(victimName) == LP.Name
+                    or tostring(victimName):lower() == LP.Name:lower()
+
+                if isUs then
+                    local enum = ADULT_SWIM.Enum
+                    if not enum and enumLib then
+                        pcall(function() enum = enumLib:ToEnum(SUCKMY_DICK) end)
+                    end
+                    if enum then
+                        args[1] = enum
+                        return orig(self, eventName, unpack(args))
+                    end
+                end
+            end
+            return orig(self, eventName, ...)
+        end
+    end)
+end)
+
+task.spawn(function()
+    task.wait(4)
+
+    local Remotes = ReplicatedStorage:FindFirstChild('Remotes')
+    if not Remotes then return end
+    local Data        = Remotes:FindFirstChild('Data')
+    local equipRemote = Data and Data:FindFirstChild('EquipCosmetic')
+    if not equipRemote or not equipRemote:IsA('RemoteEvent') then
+        warn('[r37q] EquipCosmetic remote missing — auto-equip skipped')
+        return
+    end
+
+    local function equipAll()
+        local currentData = pdc.CurrentData
+        local inner = currentData and rawget(currentData, 'Data')
+        local inv   = inner and rawget(inner, 'WeaponInventory')
+        if type(inv) ~= 'table' then return 0 end
+
+        local count = 0
+        for _, weapon in pairs(inv) do
+            local weaponName = type(weapon) == 'table' and rawget(weapon, 'Name') or nil
+            if weaponName then
+                pcall(equipRemote.FireServer, equipRemote, weaponName, 'Finisher', SUCKMY_DICK, {
+                    IsInverted = false,
+                    OnlyUseFavorites = false,
+                })
+                count = count + 1
+                task.wait(0.05)
+            end
+        end
+        return count
+    end
+
+    local initial = equipAll()
+    if initial > 0 then
+        print(string.format('[r37q] Diamond Hands equipped on %d weapons', initial))
+    end
+
+    LP.CharacterAdded:Connect(function()
+        task.wait(5)
+        pcall(equipAll)
+    end)
+
+    task.spawn(function()
+        task.wait(0.2)
+        pcall(function()
+            if currentData and type(currentData.Replicate) == 'function' then
+                currentData:Replicate('WeaponInventory')
+            end
+        end)
+    end)
+end)
+
+do
+    local Players = game:GetService("Players")
+    local LP = Players.LocalPlayer
+
+    local anchored = setmetatable({}, { __mode = "k" })
+
+    local function anchorModel(model)
+        if not model or not model.Parent then return end
+        for _, part in ipairs(model:GetDescendants()) do
+            if part:IsA("BasePart") then
+                pcall(function()
+                    part.Anchored = true
+                    part.AssemblyLinearVelocity = Vector3.zero
+                    part.AssemblyAngularVelocity = Vector3.zero
+                end)
+            end
+        end
+        local hum = model:FindFirstChildOfClass("Humanoid")
+        if hum then
+            pcall(function()
+                hum.PlatformStand = true
+                hum:ChangeState(Enum.HumanoidStateType.Physics)
+            end)
+        end
+    end
+
+    local function hookModel(model, isOwn)
+        if not model or not model:IsA("Model") then return end
+        if anchored[model] then return end
+        if isOwn then return end
+        local hum = model:FindFirstChildOfClass("Humanoid")
+        if not hum then return end
+        anchored[model] = "hooked"
+
+        hum.Died:Connect(function()
+            if anchored[model] == "anchored" then return end
+            anchored[model] = "anchored"
+            anchorModel(model)
+        end)
+
+        model.AncestryChanged:Connect(function(_, parent)
+            if not parent then
+                anchored[model] = nil
+            elseif anchored[model] == "anchored" then
+                anchorModel(model)
+            end
+        end)
+    end
+
+    local function watchPlayer(plr)
+        if plr == LP then return end
+        if plr.Character then task.spawn(hookModel, plr.Character, false) end
+        plr.CharacterAdded:Connect(function(char)
+            task.wait(0.3)
+            if char and char.Parent then task.spawn(hookModel, char, false) end
+        end)
+    end
+
+    for _, plr in ipairs(Players:GetPlayers()) do
+        task.spawn(watchPlayer, plr)
+    end
+    Players.PlayerAdded:Connect(watchPlayer)
+
+    local function hookIfNPC(model)
+        if not model:IsA("Model") then return end
+        if Players:GetPlayerFromCharacter(model) then return end
+        if not model:FindFirstChildOfClass("Humanoid") then return end
+        hookModel(model, false)
+    end
+
+    task.spawn(function()
+        local scanned = 0
+        for _, obj in ipairs(workspace:GetDescendants()) do
+            if obj:IsA("Model") then pcall(hookIfNPC, obj) end
+            scanned = scanned + 1
+            if scanned % 500 == 0 then task.wait() end
+        end
+    end)
+
+    workspace.DescendantAdded:Connect(function(obj)
+        if obj:IsA("Model") and obj:FindFirstChildOfClass("Humanoid") then
+            task.defer(function()
+                if obj.Parent then hookIfNPC(obj) end
+            end)
+        end
+    end)
+end
+
+print('[r37q] fock u skid')
